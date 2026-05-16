@@ -1,0 +1,134 @@
+class WordScramble {
+    constructor(container, appInstance) {
+        this.container = container;
+        this.app = appInstance;
+        this.words = [
+            'SCIENCE', 'HISTORY', 'GEOGRAPHY', 'BIOLOGY', 'PHYSICS',
+            'CHEMISTRY', 'MATHEMATICS', 'LITERATURE', 'ASTRONOMY', 'GEOLOGY'
+        ];
+        this.scores = { 1: 0, 2: 0 };
+        this.winningScore = 5;
+        this.currentWord = '';
+        this.gameOver = false;
+    }
+
+    init() {
+        this.renderBoard();
+        this.nextWord();
+    }
+
+    renderBoard() {
+        const board = document.createElement('div');
+        board.className = 'scramble-board';
+
+        const scoreBoard = document.createElement('div');
+        scoreBoard.className = 'scores';
+        scoreBoard.innerHTML = `
+            <div id="ws-p1-score">${this.app.state.player1}: 0</div>
+            <div id="ws-p2-score">${this.app.state.player2}: 0</div>
+        `;
+
+        const wordDisplay = document.createElement('div');
+        wordDisplay.className = 'word-display';
+        wordDisplay.id = 'scrambled-word';
+
+        const inputGroup = document.createElement('div');
+        inputGroup.className = 'input-group';
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = 'ws-answer';
+        input.placeholder = 'Type the unscrambled word...';
+        input.autocomplete = 'off';
+
+        const submitBtn = document.createElement('button');
+        submitBtn.className = 'btn-primary';
+        submitBtn.textContent = 'Submit';
+        submitBtn.onclick = () => this.checkAnswer();
+
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.checkAnswer();
+        });
+
+        const turnInfo = document.createElement('p');
+        turnInfo.id = 'ws-turn-info';
+        turnInfo.style.color = 'var(--text-muted)';
+
+        inputGroup.appendChild(input);
+        inputGroup.appendChild(submitBtn);
+
+        board.appendChild(scoreBoard);
+        board.appendChild(wordDisplay);
+        board.appendChild(turnInfo);
+        board.appendChild(inputGroup);
+
+        this.container.appendChild(board);
+    }
+
+    scramble(word) {
+        let arr = word.split('');
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        // Ensure it's actually scrambled
+        if (arr.join('') === word && word.length > 1) return this.scramble(word);
+        return arr.join('');
+    }
+
+    nextWord() {
+        if (this.gameOver) return;
+
+        const idx = Math.floor(Math.random() * this.words.length);
+        this.currentWord = this.words[idx];
+        const scrambled = this.scramble(this.currentWord);
+
+        document.getElementById('scrambled-word').textContent = scrambled;
+        document.getElementById('ws-answer').value = '';
+        
+        const pName = this.app.state.currentPlayer === 1 ? this.app.state.player1 : this.app.state.player2;
+        document.getElementById('ws-turn-info').textContent = `${pName}'s turn to guess!`;
+        
+        setTimeout(() => document.getElementById('ws-answer').focus(), 100);
+    }
+
+    checkAnswer() {
+        if (this.gameOver) return;
+
+        const answer = document.getElementById('ws-answer').value.toUpperCase().trim();
+        if (answer === this.currentWord) {
+            // Correct
+            const p = this.app.state.currentPlayer;
+            this.scores[p]++;
+            this.updateScores();
+            
+            if (this.scores[p] >= this.winningScore) {
+                const winnerName = p === 1 ? this.app.state.player1 : this.app.state.player2;
+                this.app.showMessage(`${winnerName} wins the Word Scramble! 🎉`);
+                this.gameOver = true;
+                document.getElementById('ws-answer').disabled = true;
+            } else {
+                // Switch turn and next word
+                this.app.switchTurn();
+                this.nextWord();
+            }
+        } else {
+            // Incorrect
+            alert(`Incorrect! Try again or pass.`);
+            document.getElementById('ws-answer').value = '';
+            document.getElementById('ws-answer').focus();
+            // Alternatively, lose turn on incorrect:
+            this.app.switchTurn();
+            this.nextWord();
+        }
+    }
+
+    updateScores() {
+        document.getElementById('ws-p1-score').textContent = `${this.app.state.player1}: ${this.scores[1]}`;
+        document.getElementById('ws-p2-score').textContent = `${this.app.state.player2}: ${this.scores[2]}`;
+    }
+
+    cleanup() {
+        // Nothing special to clean up
+    }
+}

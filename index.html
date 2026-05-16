@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduPlay - Multiplayer Educational Board Games</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header>
+            <h1>GAME IC3</h1>
+            <p>IC3 SPARK LEVEL 3</p>
+        </header>
+
+        <!-- Lobby View -->
+        <div id="lobby-view" class="view active">
+            <h2>Chọn một trò chơi</h2>
+            <div class="game-selection">
+                <div class="game-card" onclick="app.selectGame('math-tictactoe')">
+                    <div class="game-icon">➕</div>
+                    <h3>Tic-Tac-Toe</h3>
+                    <p>Giải các bài toán để nhận điểm</p>
+                </div>
+                <div class="game-card" onclick="app.selectGame('word-scramble')">
+                    <div class="game-icon">🔤</div>
+                    <h3>Xếp Hình Từ</h3>
+                    <p>Xếp các chữ cái thành từ có nghĩa</p>
+                </div>
+                <div class="game-card" onclick="app.selectGame('quiz')">
+                    <div class="game-icon">🧠</div>
+                    <h3>Chọn Đáp Án Đúng</h3>
+                    <p>Chọn đáp án đúng để nhận điểm</p>
+                </div>
+            </div>
+
+            <div id="player-setup" class="hidden">
+                <h3>Enter Player Names</h3>
+                <div class="input-group">
+                    <input type="text" id="player1-name" placeholder="Player 1 Name" value="Player 1">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="player2-name" placeholder="Player 2 Name" value="Player 2">
+                </div>
+                <button class="btn-primary" onclick="app.startGame()">Start Local Game</button>
+                <button class="btn-secondary" onclick="app.backToSelection()">Back</button>
+            </div>
+        </div>
+
+        <!-- Game View -->
+        <div id="game-view" class="view">
+            <div class="game-header">
+                <h2 id="current-game-title">Game Title</h2>
+                <div class="player-info">
+                    <span id="p1-display" class="player active-player">Player 1</span>
+                    <span class="vs">VS</span>
+                    <span id="p2-display" class="player">Player 2</span>
+                </div>
+                <button class="btn-secondary small" onclick="app.endGame()">Exit Game</button>
+            </div>
+
+            <div id="game-container">
+                <!-- Game board will be injected here -->
+            </div>
+
+            <div id="game-message" class="message hidden"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="games/math-tictactoe.js"></script>
+    <script src="games/word-scramble.js"></script>
+    <script src="games/quiz.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
