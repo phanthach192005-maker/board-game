@@ -323,6 +323,315 @@ button.small {
     font-size: 1.5rem;
 }
 
+/* ===== Responsive Design ===== */
+
+/* ── Large screens (≥ 1400px) ── */
+@media (min-width: 1400px) {
+    #app {
+        max-width: 1100px;
+        padding: 3rem;
+    }
+    header h1 {
+        font-size: 3.8rem;
+    }
+    .game-selection {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+    .tictactoe-board {
+        grid-template-columns: repeat(3, 120px);
+        grid-template-rows: repeat(3, 120px);
+    }
+    .tictactoe-cell {
+        font-size: 3.5rem;
+    }
+    .quiz-question-card {
+        max-width: 800px;
+    }
+}
+
+/* ── Small desktop / large tablet (≤ 1024px) ── */
+@media (max-width: 1024px) {
+    #app {
+        max-width: 720px;
+        padding: 1.75rem;
+        border-radius: 20px;
+    }
+    header h1 {
+        font-size: 2.6rem;
+    }
+    .game-selection {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.2rem;
+    }
+    .game-card {
+        padding: 1.6rem;
+    }
+    .quiz-options {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ── Tablet (≤ 768px) ── */
+@media (max-width: 768px) {
+    body {
+        align-items: flex-start;
+        padding: 1rem 0;
+    }
+    #app {
+        max-width: 100%;
+        margin: 0 1rem;
+        padding: 1.5rem 1.25rem;
+        border-radius: 18px;
+    }
+    header {
+        margin-bottom: 1.5rem;
+    }
+    header h1 {
+        font-size: 2.2rem;
+    }
+    header p {
+        font-size: 1rem;
+    }
+    h2 {
+        font-size: 1.4rem;
+        margin-bottom: 1.2rem;
+    }
+    /* Game selection cards → 2 columns on tablet */
+    .game-selection {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .game-card {
+        padding: 1.4rem 1rem;
+    }
+    .game-icon {
+        font-size: 2.4rem;
+        margin-bottom: 0.75rem;
+    }
+    .game-card h3 {
+        font-size: 1rem;
+    }
+    /* Game header wraps on tablet */
+    .game-header {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .game-header h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0;
+        width: 100%;
+        text-align: center;
+    }
+    .player-info {
+        font-size: 1rem;
+    }
+    .vs {
+        margin: 0 0.5rem;
+    }
+    /* Tic-tac-toe board scales to fit tablet */
+    .tictactoe-board {
+        grid-template-columns: repeat(3, 90px);
+        grid-template-rows: repeat(3, 90px);
+        gap: 8px;
+    }
+    .tictactoe-cell {
+        font-size: 2.5rem;
+    }
+    /* Quiz */
+    .quiz-scores {
+        gap: 1rem;
+    }
+    .quiz-score-card {
+        padding: 0.6rem 1rem;
+        min-width: 90px;
+    }
+    .score-num {
+        font-size: 2rem;
+    }
+    .quiz-question-text {
+        font-size: 1.1rem;
+    }
+    .quiz-options {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+    }
+    /* Scramble */
+    .word-display {
+        font-size: 2rem;
+        letter-spacing: 4px;
+    }
+    .scores {
+        gap: 1.5rem;
+        font-size: 1.2rem;
+    }
+    /* Buttons */
+    button {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.95rem;
+    }
+}
+
+/* ── Small phones (≤ 480px) ── */
+@media (max-width: 480px) {
+    body {
+        padding: 0.75rem 0;
+    }
+    #app {
+        margin: 0 0.5rem;
+        padding: 1.25rem 1rem;
+        border-radius: 14px;
+    }
+    header h1 {
+        font-size: 1.9rem;
+    }
+    header p {
+        font-size: 0.9rem;
+    }
+    h2 {
+        font-size: 1.2rem;
+    }
+    /* Game cards → 1 column on phones */
+    .game-selection {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    .game-card {
+        padding: 1.2rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-align: left;
+    }
+    .game-icon {
+        font-size: 2rem;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+    .game-card h3 {
+        font-size: 1rem;
+        margin-bottom: 0.2rem;
+    }
+    .game-card p {
+        font-size: 0.8rem;
+    }
+    /* Player setup */
+    #player-setup {
+        padding: 1.25rem 1rem;
+    }
+    input {
+        max-width: 100%;
+    }
+    /* Game header → stack vertically */
+    .game-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .player-info {
+        font-size: 0.9rem;
+    }
+    /* Tic-tac-toe board fits phone width */
+    .tictactoe-board {
+        grid-template-columns: repeat(3, 80px);
+        grid-template-rows: repeat(3, 80px);
+        gap: 6px;
+    }
+    .tictactoe-cell {
+        font-size: 2rem;
+    }
+    /* Modal fits phone */
+    .modal-content {
+        padding: 1.5rem 1rem;
+        width: 95%;
+    }
+    .modal-content h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    /* Quiz → 1-column options */
+    .quiz-scores {
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .quiz-score-card {
+        min-width: 80px;
+        padding: 0.5rem 0.8rem;
+    }
+    .score-num {
+        font-size: 1.8rem;
+    }
+    .quiz-question-card {
+        padding: 1.25rem 1rem;
+    }
+    .quiz-question-text {
+        font-size: 1rem;
+    }
+    .quiz-options {
+        grid-template-columns: 1fr;
+    }
+    .quiz-option-btn {
+        font-size: 0.9rem;
+        padding: 0.8rem 1rem;
+    }
+    /* Scramble */
+    .word-display {
+        font-size: 1.6rem;
+        letter-spacing: 3px;
+    }
+    .scores {
+        gap: 1rem;
+        font-size: 1rem;
+    }
+    /* Buttons */
+    button {
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+        margin: 0.3rem;
+    }
+    button.small {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    #game-container {
+        min-height: 300px;
+    }
+}
+
+/* ── Extra-small phones (≤ 360px) ── */
+@media (max-width: 360px) {
+    #app {
+        margin: 0 0.25rem;
+        padding: 1rem 0.75rem;
+        border-radius: 10px;
+    }
+    header h1 {
+        font-size: 1.6rem;
+    }
+    .tictactoe-board {
+        grid-template-columns: repeat(3, 68px);
+        grid-template-rows: repeat(3, 68px);
+        gap: 5px;
+    }
+    .tictactoe-cell {
+        font-size: 1.7rem;
+    }
+    .word-display {
+        font-size: 1.3rem;
+        letter-spacing: 2px;
+    }
+    .score-num {
+        font-size: 1.5rem;
+    }
+    button {
+        font-size: 0.85rem;
+        padding: 0.55rem 0.85rem;
+    }
+}
+
 /* ===== Quiz Battle Styles ===== */
 .quiz-board {
     display: flex;
