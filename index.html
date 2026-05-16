@@ -28,7 +28,7 @@
                 </div>
                 <div class="game-card" onclick="app.selectGame('word-scramble')">
                     <div class="game-icon">🔤</div>
-                    <h3>Xếp Hình Từ</h3>
+                    <h3>Sắp Xếp Từ</h3>
                     <p>Xếp các chữ cái thành từ có nghĩa</p>
                 </div>
                 <div class="game-card" onclick="app.selectGame('quiz')">
@@ -39,15 +39,15 @@
             </div>
 
             <div id="player-setup" class="hidden">
-                <h3>Enter Player Names</h3>
+                <h3>Nhập tên người chơi</h3>
                 <div class="input-group">
                     <input type="text" id="player1-name" placeholder="Player 1 Name" value="Player 1">
                 </div>
                 <div class="input-group">
                     <input type="text" id="player2-name" placeholder="Player 2 Name" value="Player 2">
                 </div>
-                <button class="btn-primary" onclick="app.startGame()">Start Local Game</button>
-                <button class="btn-secondary" onclick="app.backToSelection()">Back</button>
+                <button class="btn-primary" onclick="app.startGame()">Bắt đầu </button>
+                <button class="btn-secondary" onclick="app.backToSelection()">Quay lại</button>
             </div>
         </div>
 
@@ -60,7 +60,7 @@
                     <span class="vs">VS</span>
                     <span id="p2-display" class="player">Player 2</span>
                 </div>
-                <button class="btn-secondary small" onclick="app.endGame()">Exit Game</button>
+                <button class="btn-secondary small" onclick="app.endGame()">Thoát game</button>
             </div>
 
             <div id="game-container">

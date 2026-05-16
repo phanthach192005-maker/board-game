@@ -42,13 +42,13 @@ var app = {
         document.getElementById('game-message').classList.add('hidden');
 
         if (this.state.gameSelected === 'math-tictactoe') {
-            document.getElementById('current-game-title').textContent = 'Math Tic-Tac-Toe';
+            document.getElementById('current-game-title').textContent = 'Tic Tac Toe Toán Học';
             this.state.currentGameInstance = new MathTicTacToe(container, this);
         } else if (this.state.gameSelected === 'word-scramble') {
-            document.getElementById('current-game-title').textContent = 'Word Scramble';
+            document.getElementById('current-game-title').textContent = 'Sắp Xếp Từ';
             this.state.currentGameInstance = new WordScramble(container, this);
         } else if (this.state.gameSelected === 'quiz') {
-            document.getElementById('current-game-title').textContent = 'Quiz Battle';
+            document.getElementById('current-game-title').textContent = 'Chọn Đáp Án Đúng';
             this.state.currentGameInstance = new QuizBattle(container, this);
         }
 

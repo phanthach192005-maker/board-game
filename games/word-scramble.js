@@ -3,8 +3,7 @@ class WordScramble {
         this.container = container;
         this.app = appInstance;
         this.words = [
-            'SCIENCE', 'HISTORY', 'GEOGRAPHY', 'BIOLOGY', 'PHYSICS',
-            'CHEMISTRY', 'MATHEMATICS', 'LITERATURE', 'ASTRONOMY', 'GEOLOGY'
+            'CON MEO', 'NGHE THUAT', 'DAI DUONG', 'CONG DAN SO', 'CONG NGHE',  'GIAI TRI', 'HANH TINH'
         ];
         this.scores = { 1: 0, 2: 0 };
         this.winningScore = 5;
@@ -38,12 +37,12 @@ class WordScramble {
         const input = document.createElement('input');
         input.type = 'text';
         input.id = 'ws-answer';
-        input.placeholder = 'Type the unscrambled word...';
+        input.placeholder = 'Nhập đáp án.....';
         input.autocomplete = 'off';
 
         const submitBtn = document.createElement('button');
         submitBtn.className = 'btn-primary';
-        submitBtn.textContent = 'Submit';
+        submitBtn.textContent = 'Kiểm tra';
         submitBtn.onclick = () => this.checkAnswer();
 
         input.addEventListener('keypress', (e) => {
@@ -87,7 +86,7 @@ class WordScramble {
         document.getElementById('ws-answer').value = '';
         
         const pName = this.app.state.currentPlayer === 1 ? this.app.state.player1 : this.app.state.player2;
-        document.getElementById('ws-turn-info').textContent = `${pName}'s turn to guess!`;
+        document.getElementById('ws-turn-info').textContent = `Đến lượt ${pName}`;
         
         setTimeout(() => document.getElementById('ws-answer').focus(), 100);
     }
@@ -104,7 +103,7 @@ class WordScramble {
             
             if (this.scores[p] >= this.winningScore) {
                 const winnerName = p === 1 ? this.app.state.player1 : this.app.state.player2;
-                this.app.showMessage(`${winnerName} wins the Word Scramble! 🎉`);
+                this.app.showMessage(`${winnerName} đã chiến thắng!`);
                 this.gameOver = true;
                 document.getElementById('ws-answer').disabled = true;
             } else {
