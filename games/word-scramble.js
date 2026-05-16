@@ -3,12 +3,16 @@ class WordScramble {
         this.container = container;
         this.app = appInstance;
         this.words = [
-            'CON MEO', 'NGHE THUAT', 'DAI DUONG', 'CONG DAN SO', 'CONG NGHE',  'GIAI TRI', 'HANH TINH'
+            'CON MEO', 'USB DRIVE', 'DAI DUONG', 'CONG DAN SO', 'CONG NGHE',  'GIAI TRI', 'BAT NAT TRUC TUYEN', 'CAI DAT VI TRI',
+            'INTERNET', 'VIRUS', 'LUU TRU DAM MAY', 'COOKIES', 'HACKING', 'BOOKMARK', 'HACKER', 'DU LIEU'
         ];
         this.scores = { 1: 0, 2: 0 };
-        this.winningScore = 5;
+        this.winningScore = 10;
         this.currentWord = '';
         this.gameOver = false;
+        this.timeLimit = 30;       // seconds per turn
+        this.timeLeft = 30;
+        this._timerInterval = null;
     }
 
     init() {
@@ -30,6 +34,17 @@ class WordScramble {
         const wordDisplay = document.createElement('div');
         wordDisplay.className = 'word-display';
         wordDisplay.id = 'scrambled-word';
+
+        // ── Countdown Timer Ring ──
+        const timerWrap = document.createElement('div');
+        timerWrap.className = 'ws-timer-wrap';
+        timerWrap.innerHTML = `
+            <svg class="ws-timer-ring" viewBox="0 0 64 64" width="64" height="64">
+                <circle class="ws-ring-bg" cx="32" cy="32" r="28" />
+                <circle class="ws-ring-fill" id="ws-ring-fill" cx="32" cy="32" r="28" />
+            </svg>
+            <span class="ws-timer-text" id="ws-timer-text">30</span>
+        `;
 
         const inputGroup = document.createElement('div');
         inputGroup.className = 'input-group';
@@ -58,6 +73,7 @@ class WordScramble {
 
         board.appendChild(scoreBoard);
         board.appendChild(wordDisplay);
+        board.appendChild(timerWrap);
         board.appendChild(turnInfo);
         board.appendChild(inputGroup);
 
@@ -89,6 +105,66 @@ class WordScramble {
         document.getElementById('ws-turn-info').textContent = `Đến lượt ${pName}`;
         
         setTimeout(() => document.getElementById('ws-answer').focus(), 100);
+        this.startTimer();
+    }
+
+    // ── Timer helpers ──────────────────────────────────────────────
+    startTimer() {
+        this.stopTimer();
+        this.timeLeft = this.timeLimit;
+        this._updateTimerUI();
+
+        this._timerInterval = setInterval(() => {
+            this.timeLeft--;
+            this._updateTimerUI();
+            if (this.timeLeft <= 0) {
+                this.stopTimer();
+                this._onTimeout();
+            }
+        }, 1000);
+    }
+
+    stopTimer() {
+        if (this._timerInterval) {
+            clearInterval(this._timerInterval);
+            this._timerInterval = null;
+        }
+    }
+
+    _updateTimerUI() {
+        const textEl  = document.getElementById('ws-timer-text');
+        const ringEl  = document.getElementById('ws-ring-fill');
+        const wrapEl  = document.querySelector('.ws-timer-wrap');
+        if (!textEl || !ringEl || !wrapEl) return;
+
+        const pct = this.timeLeft / this.timeLimit;          // 1 → 0
+        const circumference = 2 * Math.PI * 28;              // r = 28
+        const dashOffset = circumference * (1 - pct);
+
+        ringEl.style.strokeDasharray  = circumference;
+        ringEl.style.strokeDashoffset = dashOffset;
+        textEl.textContent = this.timeLeft;
+
+        // Colour states
+        wrapEl.classList.remove('ws-timer-warn', 'ws-timer-danger');
+        if (this.timeLeft <= 5) {
+            wrapEl.classList.add('ws-timer-danger');
+        } else if (this.timeLeft <= 10) {
+            wrapEl.classList.add('ws-timer-warn');
+        }
+    }
+
+    _onTimeout() {
+        if (this.gameOver) return;
+        // Flash the word reveal briefly, then move on
+        const turnInfo = document.getElementById('ws-turn-info');
+        if (turnInfo) turnInfo.textContent = `⏰ Hết giờ! Từ đúng: ${this.currentWord}`;
+        setTimeout(() => {
+            if (!this.gameOver) {
+                this.app.switchTurn();
+                this.nextWord();
+            }
+        }, 1500);
     }
 
     checkAnswer() {
@@ -97,6 +173,7 @@ class WordScramble {
         const answer = document.getElementById('ws-answer').value.toUpperCase().trim();
         if (answer === this.currentWord) {
             // Correct
+            this.stopTimer();
             const p = this.app.state.currentPlayer;
             this.scores[p]++;
             this.updateScores();
@@ -112,11 +189,11 @@ class WordScramble {
                 this.nextWord();
             }
         } else {
-            // Incorrect
-            alert(`Incorrect! Try again or pass.`);
+            // Incorrect — lose turn
+            this.stopTimer();
+            alert(`Sai rồi. Hãy thử lại.`);
             document.getElementById('ws-answer').value = '';
             document.getElementById('ws-answer').focus();
-            // Alternatively, lose turn on incorrect:
             this.app.switchTurn();
             this.nextWord();
         }
@@ -128,6 +205,6 @@ class WordScramble {
     }
 
     cleanup() {
-        // Nothing special to clean up
+        this.stopTimer();
     }
 }

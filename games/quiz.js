@@ -7,6 +7,11 @@ class QuizBattle {
         this.gameOver = false;
         this.currentQuestion = null;
 
+        // Timer
+        this.timeLimit = 15;
+        this.timeLeft = 15;
+        this._timerInterval = null;
+
         this.questions = [
             { q: "Em hãy cho biết USB Drive dùng để làm gì", options: ["Chụp ảnh", "Chơi game", "Gửi và nhận tin nhắn SMS", "Lưu trữ và truyền dữ liệu"], answer: 3 },
             { q: "Em hãy cho biết, cài đặt thiết bị di động nào cho phép ứng dụng theo dõi vị trí của em?", options: ["Cài đặt thông báo", "Cài đặt vị trí", "Cài đặt độ sáng màn hình", "Cài đặt Wifi"], answer: 1 },
@@ -54,6 +59,13 @@ class QuizBattle {
 
             <div class="quiz-turn-info" id="qz-turn-info"></div>
 
+            <div class="qz-timer-wrap" id="qz-timer-wrap">
+                <div class="qz-timer-bar-track">
+                    <div class="qz-timer-bar" id="qz-timer-bar"></div>
+                </div>
+                <span class="qz-timer-text" id="qz-timer-text">15</span>
+            </div>
+
             <div class="quiz-question-card">
                 <p class="quiz-question-text" id="qz-question">Loading...</p>
                 <div class="quiz-options" id="qz-options"></div>
@@ -72,7 +84,7 @@ class QuizBattle {
         this.currentQuestion = this.questions[idx];
 
         const pName = this.app.state.currentPlayer === 1 ? this.app.state.player1 : this.app.state.player2;
-        document.getElementById('qz-turn-info').textContent = `${pName}'s turn to answer!`;
+        document.getElementById('qz-turn-info').textContent = `Đến lượt ${pName} trả lời!`;
         document.getElementById('qz-question').textContent = this.currentQuestion.q;
         document.getElementById('qz-feedback').classList.add('hidden');
 
@@ -87,10 +99,13 @@ class QuizBattle {
             btn.onclick = () => this.selectAnswer(i, optionsEl);
             optionsEl.appendChild(btn);
         });
+
+        this.startTimer();
     }
 
     selectAnswer(selectedIndex, optionsEl) {
         if (this.gameOver) return;
+        this.stopTimer();
 
         const correct = this.currentQuestion.answer;
         const buttons = optionsEl.querySelectorAll('.quiz-option-btn');
@@ -99,9 +114,8 @@ class QuizBattle {
         buttons.forEach(b => b.disabled = true);
 
         // Highlight correct and wrong
-        if (selectedIndex == correct){
-            buttons[selectedIndex].classList.add('correct');
-        }else{
+        buttons[correct].classList.add('correct');
+        if (selectedIndex !== correct) {
             buttons[selectedIndex].classList.add('wrong');
         }
 
@@ -112,7 +126,7 @@ class QuizBattle {
         if (selectedIndex === correct) {
             this.scores[p]++;
             this.updateScores();
-            feedbackEl.textContent = 'Chính xác!';
+            feedbackEl.textContent = 'Chính xác! ✅';
             feedbackEl.classList.add('feedback-correct');
 
             if (this.scores[p] >= this.winningScore) {
@@ -122,7 +136,7 @@ class QuizBattle {
                 return;
             }
         } else {
-            feedbackEl.textContent = `Chưa chính xác!`;
+            feedbackEl.textContent = `Chưa chính xác! ❌`;
             feedbackEl.classList.add('feedback-wrong');
         }
 
@@ -132,10 +146,82 @@ class QuizBattle {
         }, 1800);
     }
 
+    // ── Timer helpers ──────────────────────────────────────────────
+    startTimer() {
+        this.stopTimer();
+        this.timeLeft = this.timeLimit;
+        this._updateTimerUI();
+
+        this._timerInterval = setInterval(() => {
+            this.timeLeft--;
+            this._updateTimerUI();
+            if (this.timeLeft <= 0) {
+                this.stopTimer();
+                this._onTimeout();
+            }
+        }, 1000);
+    }
+
+    stopTimer() {
+        if (this._timerInterval) {
+            clearInterval(this._timerInterval);
+            this._timerInterval = null;
+        }
+    }
+
+    _updateTimerUI() {
+        const textEl = document.getElementById('qz-timer-text');
+        const barEl  = document.getElementById('qz-timer-bar');
+        const wrapEl = document.getElementById('qz-timer-wrap');
+        if (!textEl || !barEl || !wrapEl) return;
+
+        const pct = (this.timeLeft / this.timeLimit) * 100;
+        barEl.style.width = pct + '%';
+        textEl.textContent = this.timeLeft;
+
+        // Colour states
+        wrapEl.classList.remove('qz-timer-warn', 'qz-timer-danger');
+        if (this.timeLeft <= 5) {
+            wrapEl.classList.add('qz-timer-danger');
+        } else if (this.timeLeft <= 8) {
+            wrapEl.classList.add('qz-timer-warn');
+        }
+    }
+
+    _onTimeout() {
+        if (this.gameOver) return;
+
+        // Disable buttons and show correct answer
+        const optionsEl = document.getElementById('qz-options');
+        if (optionsEl) {
+            const buttons = optionsEl.querySelectorAll('.quiz-option-btn');
+            buttons.forEach(b => b.disabled = true);
+            if (buttons[this.currentQuestion.answer]) {
+                buttons[this.currentQuestion.answer].classList.add('correct');
+            }
+        }
+
+        const feedbackEl = document.getElementById('qz-feedback');
+        if (feedbackEl) {
+            feedbackEl.classList.remove('hidden', 'feedback-correct', 'feedback-wrong');
+            feedbackEl.textContent = '⏰ Hết giờ! Mất lượt.';
+            feedbackEl.classList.add('feedback-wrong');
+        }
+
+        setTimeout(() => {
+            if (!this.gameOver) {
+                this.app.switchTurn();
+                this.nextQuestion();
+            }
+        }, 1800);
+    }
+
     updateScores() {
         document.getElementById('qz-p1-score').textContent = this.scores[1];
         document.getElementById('qz-p2-score').textContent = this.scores[2];
     }
 
-    cleanup() {}
+    cleanup() {
+        this.stopTimer();
+    }
 }

@@ -323,6 +323,69 @@ button.small {
     font-size: 1.5rem;
 }
 
+/* ── Word Scramble Countdown Timer ── */
+.ws-timer-wrap {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ws-timer-ring {
+    position: absolute;
+    top: 0; left: 0;
+    transform: rotate(-90deg); /* start from top */
+    width: 80px;
+    height: 80px;
+}
+
+.ws-ring-bg {
+    fill: none;
+    stroke: rgba(255,255,255,0.08);
+    stroke-width: 5;
+}
+
+.ws-ring-fill {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 5;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.9s linear, stroke 0.3s ease;
+}
+
+.ws-timer-text {
+    position: relative;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-light);
+    transition: color 0.3s ease;
+    line-height: 1;
+}
+
+/* Warning state (≤ 10s) — yellow ring */
+.ws-timer-wrap.ws-timer-warn .ws-ring-fill {
+    stroke: #f59e0b;
+}
+.ws-timer-wrap.ws-timer-warn .ws-timer-text {
+    color: #f59e0b;
+}
+
+/* Danger state (≤ 5s) — red ring + pulse */
+.ws-timer-wrap.ws-timer-danger .ws-ring-fill {
+    stroke: var(--danger);
+}
+.ws-timer-wrap.ws-timer-danger .ws-timer-text {
+    color: var(--danger);
+    animation: ws-pulse 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes ws-pulse {
+    from { transform: scale(1); }
+    to   { transform: scale(1.3); }
+}
+
 /* ===== Responsive Design ===== */
 
 /* ── Large screens (≥ 1400px) ── */
@@ -779,3 +842,84 @@ button.small {
     color: var(--danger);
 }
 
+/* ── Quiz Battle Countdown Bar ── */
+.qz-timer-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 680px;
+}
+
+.qz-timer-bar-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.qz-timer-bar {
+    height: 100%;
+    width: 100%;
+    background: var(--primary);
+    border-radius: 99px;
+    transition: width 0.9s linear, background 0.3s ease;
+}
+
+.qz-timer-text {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    min-width: 24px;
+    text-align: right;
+    transition: color 0.3s ease;
+}
+
+/* Warning state (≤ 8s) — amber bar */
+.qz-timer-wrap.qz-timer-warn .qz-timer-bar {
+    background: #f59e0b;
+}
+.qz-timer-wrap.qz-timer-warn .qz-timer-text {
+    color: #f59e0b;
+}
+
+/* Danger state (≤ 5s) — red bar + pulsing number */
+.qz-timer-wrap.qz-timer-danger .qz-timer-bar {
+    background: var(--danger);
+}
+.qz-timer-wrap.qz-timer-danger .qz-timer-text {
+    color: var(--danger);
+    animation: ws-pulse 0.5s ease-in-out infinite alternate;
+}
+
+/* ── Tic-Tac-Toe modal timer ring sizing ── */
+.modal-content .ws-timer-wrap {
+    width: 80px;
+    height: 80px;
+}
+.modal-content .ws-timer-ring {
+    width: 80px;
+    height: 80px;
+}
+
+/* Responsive adjustments for new timers */
+@media (max-width: 480px) {
+    .qz-timer-wrap {
+        gap: 0.5rem;
+    }
+    .qz-timer-bar-track {
+        height: 6px;
+    }
+    .qz-timer-text {
+        font-size: 0.85rem;
+    }
+    .modal-content .ws-timer-wrap {
+        width: 64px;
+        height: 64px;
+    }
+    .modal-content .ws-timer-ring {
+        width: 64px;
+        height: 64px;
+    }
+}

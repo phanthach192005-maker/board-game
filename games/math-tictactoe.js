@@ -9,6 +9,11 @@ class MathTicTacToe {
         this.modalOverlay = null;
         this.currentCellIndex = null;
         this.currentAnswer = null;
+
+        // Timer
+        this.timeLimit = 20;
+        this.timeLeft = 20;
+        this._timerInterval = null;
     }
 
     init() {
@@ -38,28 +43,41 @@ class MathTicTacToe {
         const content = document.createElement('div');
         content.className = 'modal-content';
 
+        // ── Timer ring ──
+        const timerWrap = document.createElement('div');
+        timerWrap.className = 'ws-timer-wrap';
+        timerWrap.style.margin = '0 auto 1rem';
+        timerWrap.innerHTML = `
+            <svg class="ws-timer-ring" viewBox="0 0 64 64" width="64" height="64">
+                <circle class="ws-ring-bg" cx="32" cy="32" r="28" />
+                <circle class="ws-ring-fill" id="tt-ring-fill" cx="32" cy="32" r="28" />
+            </svg>
+            <span class="ws-timer-text" id="tt-timer-text">20</span>
+        `;
+
         const questionEl = document.createElement('h3');
         questionEl.id = 'math-question';
 
         const inputEl = document.createElement('input');
         inputEl.type = 'number';
         inputEl.id = 'math-answer';
-        inputEl.placeholder = 'Your answer...';
+        inputEl.placeholder = 'Nhập đáp án...';
 
         const submitBtn = document.createElement('button');
         submitBtn.className = 'btn-primary';
-        submitBtn.textContent = 'Submit';
+        submitBtn.textContent = 'Kiểm tra';
         submitBtn.onclick = () => this.checkAnswer();
 
         const cancelBtn = document.createElement('button');
         cancelBtn.className = 'btn-secondary';
-        cancelBtn.textContent = 'Cancel';
-        cancelBtn.onclick = () => this.closeModal();
+        cancelBtn.textContent = 'Bỏ qua';
+        cancelBtn.onclick = () => this.closeModal(true);
 
         inputEl.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.checkAnswer();
         });
 
+        content.appendChild(timerWrap);
         content.appendChild(questionEl);
         content.appendChild(inputEl);
         content.appendChild(submitBtn);
@@ -102,14 +120,14 @@ class MathTicTacToe {
         document.getElementById('math-answer').value = '';
         this.modalOverlay.classList.remove('hidden');
         setTimeout(() => document.getElementById('math-answer').focus(), 100);
+        this.startTimer();
     }
 
     checkAnswer() {
         const inputEl = document.getElementById('math-answer');
-        if (!inputEl.value.trim()) {
-            return; // Do nothing if the input is empty
-        }
+        if (!inputEl.value.trim()) return;
 
+        this.stopTimer();
         const userAns = parseInt(inputEl.value, 10);
 
         if (userAns === this.currentAnswer) {
@@ -122,17 +140,69 @@ class MathTicTacToe {
             }
         } else {
             // Incorrect, lose turn
-            alert(`Incorrect! The answer was ${this.currentAnswer}. Turn lost.`);
+            alert(`Sai rồi! Đáp án đúng là ${this.currentAnswer}. Mất lượt!`);
             this.app.switchTurn();
         }
 
-        this.closeModal();
+        this.closeModal(false);
     }
 
-    closeModal() {
+    closeModal(switchTurn = false) {
+        this.stopTimer();
         this.modalOverlay.classList.add('hidden');
         this.currentCellIndex = null;
         this.currentAnswer = null;
+        if (switchTurn) this.app.switchTurn();
+    }
+
+    // ── Timer helpers ──────────────────────────────────────────────
+    startTimer() {
+        this.stopTimer();
+        this.timeLeft = this.timeLimit;
+        this._updateTimerUI();
+
+        this._timerInterval = setInterval(() => {
+            this.timeLeft--;
+            this._updateTimerUI();
+            if (this.timeLeft <= 0) {
+                this.stopTimer();
+                this._onTimeout();
+            }
+        }, 1000);
+    }
+
+    stopTimer() {
+        if (this._timerInterval) {
+            clearInterval(this._timerInterval);
+            this._timerInterval = null;
+        }
+    }
+
+    _updateTimerUI() {
+        const textEl = document.getElementById('tt-timer-text');
+        const ringEl = document.getElementById('tt-ring-fill');
+        const wrapEl = this.modalOverlay ? this.modalOverlay.querySelector('.ws-timer-wrap') : null;
+        if (!textEl || !ringEl || !wrapEl) return;
+
+        const pct = this.timeLeft / this.timeLimit;
+        const circumference = 2 * Math.PI * 28;
+        ringEl.style.strokeDasharray  = circumference;
+        ringEl.style.strokeDashoffset = circumference * (1 - pct);
+        textEl.textContent = this.timeLeft;
+
+        wrapEl.classList.remove('ws-timer-warn', 'ws-timer-danger');
+        if (this.timeLeft <= 5) {
+            wrapEl.classList.add('ws-timer-danger');
+        } else if (this.timeLeft <= 10) {
+            wrapEl.classList.add('ws-timer-warn');
+        }
+    }
+
+    _onTimeout() {
+        if (this.gameOver) return;
+        alert(`⏰ Hết giờ! Đáp án đúng là ${this.currentAnswer}. Mất lượt!`);
+        this.app.switchTurn();
+        this.closeModal(false);
     }
 
     updateCellUI(index) {
@@ -152,21 +222,21 @@ class MathTicTacToe {
         const winPatterns = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
             [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
-            [0, 4, 8], [2, 4, 6]           // diags
+            [0, 4, 8], [2, 4, 6]              // diags
         ];
 
         for (let p of winPatterns) {
             const [a, b, c] = p;
             if (this.board[a] && this.board[a] === this.board[b] && this.board[a] === this.board[c]) {
                 const winnerName = this.board[a] === 1 ? this.app.state.player1 : this.app.state.player2;
-                this.app.showMessage(`${winnerName} wins! 🎉`);
+                this.app.showMessage(`${winnerName} đã chiến thắng! 🎉`);
                 this.gameOver = true;
                 return true;
             }
         }
 
         if (!this.board.includes(null)) {
-            this.app.showMessage("It's a draw!");
+            this.app.showMessage('Hòa rồi!');
             this.gameOver = true;
             return true;
         }
@@ -175,6 +245,7 @@ class MathTicTacToe {
     }
 
     cleanup() {
+        this.stopTimer();
         if (this.modalOverlay) {
             this.modalOverlay.remove();
         }
