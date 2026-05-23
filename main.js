@@ -50,6 +50,9 @@ var app = {
         } else if (this.state.gameSelected === 'quiz') {
             document.getElementById('current-game-title').textContent = 'Chọn Đáp Án Đúng';
             this.state.currentGameInstance = new QuizBattle(container, this);
+        } else if (this.state.gameSelected === 'football-penalty') {
+            document.getElementById('current-game-title').textContent = 'Sút Phạt Đền (Penalty Kick)';
+            this.state.currentGameInstance = new PenaltyKick(container, this);
         }
 
         this.state.currentGameInstance.init();

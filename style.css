@@ -923,3 +923,718 @@ button.small {
         height: 64px;
     }
 }
+
+/* ==========================================================================
+   ===== Penalty Kick Specific Styles (Sút Phạt Đền) =====
+   ========================================================================== */
+
+.pk-board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+/* Scoreboard */
+.pk-scoreboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 680px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.pk-player-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+/* Kicker Active States */
+.pk-player-panel#pk-p1-panel.active-kicker {
+    background: rgba(99, 102, 241, 0.15);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.pk-player-panel#pk-p2-panel.active-kicker {
+    background: rgba(236, 72, 153, 0.15);
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.25);
+    border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.pk-player-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.pk-player-panel#pk-p1-panel .pk-player-name {
+    color: #a5b4fc; /* pastel primary */
+}
+
+.pk-player-panel#pk-p2-panel .pk-player-name {
+    color: #fbcfe8; /* pastel secondary */
+}
+
+.pk-vs {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--secondary);
+    padding: 0 1rem;
+}
+
+.pk-score-num {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-light);
+}
+
+.pk-player-panel#pk-p1-panel .pk-score-num {
+    color: var(--primary);
+}
+
+.pk-player-panel#pk-p2-panel .pk-score-num {
+    color: var(--secondary);
+}
+
+/* Penalty Shootout Dots */
+.pk-shootout-dots {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.2rem;
+}
+
+.pk-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.pk-dot.empty {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.pk-dot.goal {
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+}
+
+.pk-dot.miss {
+    background: var(--danger);
+    box-shadow: 0 0 8px var(--danger);
+}
+
+/* Stadium Arena */
+.pk-stadium {
+    position: relative;
+    width: 100%;
+    max-width: 680px;
+    height: 380px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #111827 0%, #0f172a 40%, #064e3b 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Goal Area */
+.pk-goal-area {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(to bottom, rgba(15, 23, 42, 0.9) 0%, rgba(6, 78, 59, 0.6) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.pk-goalpost {
+    position: relative;
+    width: 320px;
+    height: 150px;
+    border-left: 6px solid #f8fafc;
+    border-right: 6px solid #f8fafc;
+    border-top: 6px solid #f8fafc;
+    border-radius: 4px 4px 0 0;
+    box-shadow: 0 -4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.pk-goal-net {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 12px 12px;
+}
+
+/* Goalkeeper */
+.pk-goalkeeper {
+    position: absolute;
+    bottom: 5px;
+    left: calc(50% - 24px);
+    font-size: 3rem;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 10;
+    user-select: none;
+}
+
+/* Interactive Target Overlays */
+.pk-target {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: rgba(251, 191, 36, 0.15);
+    border: 2px dashed rgba(251, 191, 36, 0.6);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 20;
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+}
+
+/* Active shooting targets */
+.pk-shooting-phase .pk-target {
+    opacity: 0.7;
+    pointer-events: auto;
+}
+
+.pk-shooting-phase .pk-target:hover {
+    opacity: 1;
+    transform: scale(1.2);
+    background: rgba(251, 191, 36, 0.35);
+    border-color: #fbbf24;
+    border-style: solid;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+}
+
+/* Target Positions */
+.pk-target.tl { top: 10px; left: 10px; }
+.pk-target.tr { top: 10px; right: 10px; }
+.pk-target.c  { top: 55px; left: calc(50% - 20px); }
+.pk-target.bl { bottom: 10px; left: 10px; }
+.pk-target.br { bottom: 10px; right: 10px; }
+
+/* Football Pitch */
+.pk-pitch {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    background: repeating-linear-gradient(
+        0deg,
+        #15803d 0px,
+        #15803d 30px,
+        #166534 30px,
+        #166534 60px
+    );
+    border-top: 2px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    justify-content: center;
+}
+
+.pk-penalty-box {
+    position: absolute;
+    top: 0;
+    width: 440px;
+    height: 110px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    border-left: 2px solid rgba(255, 255, 255, 0.3);
+    border-right: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0 0 40px 40px;
+    pointer-events: none;
+}
+
+.pk-penalty-spot {
+    position: absolute;
+    bottom: 50px;
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(255,255,255,1);
+}
+
+.pk-ball {
+    position: absolute;
+    bottom: 34px;
+    left: calc(50% - 20px);
+    font-size: 2.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+    transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 15;
+    user-select: none;
+}
+
+/* Live Goal / Save Message Overlay */
+.pk-stadium-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 30;
+    backdrop-filter: blur(2px);
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.pk-result-text {
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(0,0,0,0.8);
+    user-select: none;
+}
+
+.pk-result-text.goal {
+    color: #22c55e;
+    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.pk-result-text.save {
+    color: #f59e0b;
+    animation: popIn 0.5s ease forwards;
+}
+
+.pk-result-text.miss {
+    color: #ef4444;
+    animation: popIn 0.5s ease forwards;
+}
+
+/* ── Goal overlay rich layout ─────────────────────────────────── */
+.pk-goal-overlay-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: center;
+}
+
+.pk-goal-sub {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+    animation: subFadeUp 0.5s 0.25s ease both;
+}
+
+.pk-goal-sparkles {
+    font-size: 1.6rem;
+    letter-spacing: 6px;
+    animation: subFadeUp 0.5s 0.4s ease both;
+}
+
+/* Override goal text animation for the new overlay */
+.pk-goal-overlay-inner .pk-result-text.goal {
+    font-size: 5rem;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #22c55e, #86efac, #4ade80);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 24px rgba(34,197,94,0.8));
+    animation: goalTextSlam 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.pk-goal-overlay-inner .pk-result-text.save {
+    font-size: 3.8rem;
+    color: #f59e0b;
+    filter: drop-shadow(0 0 16px rgba(245,158,11,0.7));
+    animation: goalTextSlam 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.pk-goal-overlay-inner .pk-result-text.miss {
+    font-size: 3.4rem;
+    color: #ef4444;
+    filter: drop-shadow(0 0 14px rgba(239,68,68,0.7));
+    animation: goalTextSlam 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* ── Ball launch (spinning arc flight) ───────────────────────── */
+.pk-ball-launch {
+    filter: drop-shadow(0 0 12px rgba(255,255,255,0.6));
+    /* The shoot-* classes control position; launch adds the spin trail */
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+/* ── Ball frozen in net after goal ──────────────────────────── */
+.pk-ball-in-net {
+    filter: drop-shadow(0 0 18px rgba(34,197,94,0.9)) drop-shadow(0 0 6px rgba(34,197,94,0.6)) !important;
+    opacity: 0.85;
+    animation: ballGlow 0.8s ease-in-out infinite alternate;
+}
+
+/* ── Goal net bulge ripple ───────────────────────────────────── */
+.pk-net-bulge .pk-goal-net {
+    animation: netBulge 0.6s ease-out forwards;
+}
+
+.pk-net-bulge {
+    box-shadow: 0 -4px 15px rgba(255, 255, 255, 0.2), inset 0 0 40px rgba(34,197,94,0.25) !important;
+}
+
+/* ── Stadium green flash on GOAL ─────────────────────────────── */
+.pk-goal-flash {
+    animation: goalFlash 0.55s ease-out forwards;
+}
+
+/* Visual Confetti */
+.pk-confetti {
+    position: absolute;
+    top: -20px;
+    width: 8px;
+    height: 16px;
+    border-radius: 2px;
+    opacity: 0.8;
+    z-index: 25;
+    animation: confettiFall 2.2s linear forwards;
+}
+
+/* Control Panel */
+.pk-control-panel {
+    width: 100%;
+    max-width: 680px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pk-instructions {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.pk-question-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.pk-question-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    color: var(--text-light);
+}
+
+/* Goalkeeper Diving Animations */
+.pk-goalkeeper.dive-top-left {
+    bottom: auto;
+    top: 10px;
+    left: 15px;
+    transform: rotate(-45deg) scale(0.85);
+}
+
+.pk-goalkeeper.dive-top-right {
+    bottom: auto;
+    top: 10px;
+    left: calc(100% - 63px);
+    transform: rotate(45deg) scale(0.85);
+}
+
+.pk-goalkeeper.dive-center {
+    bottom: auto;
+    top: 45px;
+    left: calc(50% - 24px);
+    transform: translateY(-10px) scale(0.95);
+}
+
+.pk-goalkeeper.dive-bottom-left {
+    bottom: 10px;
+    left: 15px;
+    transform: rotate(-75deg) scale(0.8);
+}
+
+.pk-goalkeeper.dive-bottom-right {
+    bottom: 10px;
+    left: calc(100% - 63px);
+    transform: rotate(75deg) scale(0.8);
+}
+
+/* Ball Shooting Animations */
+.pk-ball.shoot-top-left {
+    bottom: auto;
+    top: 10px;
+    left: 15px;
+    transform: scale(0.35) rotate(720deg);
+}
+
+.pk-ball.shoot-top-right {
+    bottom: auto;
+    top: 10px;
+    left: calc(100% - 55px);
+    transform: scale(0.35) rotate(720deg);
+}
+
+.pk-ball.shoot-center {
+    bottom: auto;
+    top: 55px;
+    left: calc(50% - 20px);
+    transform: scale(0.35) rotate(720deg);
+}
+
+.pk-ball.shoot-bottom-left {
+    bottom: 10px;
+    left: 15px;
+    transform: scale(0.35) rotate(720deg);
+}
+
+.pk-ball.shoot-bottom-right {
+    bottom: 10px;
+    left: calc(100% - 55px);
+    transform: scale(0.35) rotate(720deg);
+}
+
+/* Ball Miss Animations (Off target) */
+.pk-ball.shoot-miss-left-high {
+    bottom: auto;
+    top: -20px;
+    left: -30px;
+    transform: scale(0.25) rotate(720deg);
+}
+
+.pk-ball.shoot-miss-right-high {
+    bottom: auto;
+    top: -20px;
+    left: calc(100% + 10px);
+    transform: scale(0.25) rotate(720deg);
+}
+
+.pk-ball.shoot-miss-high {
+    bottom: auto;
+    top: -30px;
+    left: calc(50% - 20px);
+    transform: scale(0.25) rotate(720deg);
+}
+
+.pk-ball.shoot-miss-left {
+    bottom: auto;
+    top: 80px;
+    left: -40px;
+    transform: scale(0.3) rotate(720deg);
+}
+
+.pk-ball.shoot-miss-right {
+    bottom: auto;
+    top: 80px;
+    left: calc(100% + 20px);
+    transform: scale(0.3) rotate(720deg);
+}
+
+/* Screen Shake (On missed/saved kicks) */
+.pk-shake {
+    animation: screenShake 0.4s ease forwards;
+}
+
+/* Animations definition */
+@keyframes confettiFall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(380px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes screenShake {
+    0%, 100% { transform: translate(0, 0); }
+    10%, 90% { transform: translate(-4px, 2px); }
+    20%, 80% { transform: translate(4px, -2px); }
+    30%, 70% { transform: translate(-6px, -2px); }
+    40%, 60% { transform: translate(6px, 2px); }
+    50% { transform: translate(-2px, 4px); }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    70% { transform: scale(0.9); opacity: 0.9; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* ── New goal effect keyframes ──────────────────────────────── */
+@keyframes goalTextSlam {
+    0%   { transform: scale(0) rotate(-8deg); opacity: 0; }
+    60%  { transform: scale(1.15) rotate(2deg); opacity: 1; }
+    80%  { transform: scale(0.95) rotate(-1deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes subFadeUp {
+    0%   { transform: translateY(18px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes ballGlow {
+    from { filter: drop-shadow(0 0 14px rgba(34,197,94,0.8)) drop-shadow(0 0 4px rgba(34,197,94,0.5)); }
+    to   { filter: drop-shadow(0 0 26px rgba(34,197,94,1))   drop-shadow(0 0 10px rgba(34,197,94,0.8)); }
+}
+
+@keyframes netBulge {
+    0%   { background-size: 12px 12px; transform: scaleX(1)   scaleY(1); }
+    30%  { background-size: 18px 18px; transform: scaleX(1.04) scaleY(1.06); }
+    65%  { background-size: 14px 14px; transform: scaleX(1.01) scaleY(1.02); }
+    100% { background-size: 12px 12px; transform: scaleX(1)   scaleY(1); }
+}
+
+@keyframes goalFlash {
+    0%   { background: linear-gradient(to bottom, rgba(34,197,94,0.35) 0%, rgba(6,78,59,0.6) 100%); }
+    35%  { background: linear-gradient(to bottom, rgba(34,197,94,0.65) 0%, rgba(34,197,94,0.45) 100%); }
+    100% { background: linear-gradient(to bottom, rgba(15, 23, 42, 0.9) 0%, rgba(6, 78, 59, 0.6) 100%); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .pk-stadium {
+        height: 320px;
+    }
+    .pk-goal-area {
+        height: 150px;
+    }
+    .pk-goalpost {
+        width: 260px;
+        height: 120px;
+    }
+    .pk-goalkeeper {
+        font-size: 2.5rem;
+        width: 40px;
+        height: 40px;
+        left: calc(50% - 20px);
+    }
+    .pk-target {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    .pk-target.c { left: calc(50% - 16px); }
+    .pk-ball {
+        font-size: 2rem;
+        width: 32px;
+        height: 32px;
+        bottom: 25px;
+        left: calc(50% - 16px);
+    }
+    .pk-penalty-box {
+        width: 340px;
+        height: 90px;
+    }
+    .pk-scoreboard {
+        padding: 0.8rem 1rem;
+    }
+    .pk-score-num {
+        font-size: 2rem;
+    }
+    .pk-dot {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pk-stadium {
+        height: 260px;
+    }
+    .pk-goal-area {
+        height: 120px;
+    }
+    .pk-goalpost {
+        width: 200px;
+        height: 95px;
+        border-width: 4px;
+    }
+    .pk-goalkeeper {
+        font-size: 2rem;
+        width: 32px;
+        height: 32px;
+        left: calc(50% - 16px);
+    }
+    .pk-target {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+    }
+    .pk-target.c { left: calc(50% - 12px); }
+    .pk-ball {
+        font-size: 1.6rem;
+        width: 26px;
+        height: 26px;
+        bottom: 20px;
+        left: calc(50% - 13px);
+    }
+    .pk-penalty-box {
+        width: 240px;
+        height: 70px;
+    }
+    .pk-scoreboard {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.6rem;
+    }
+    .pk-vs {
+        display: none;
+    }
+    .pk-player-panel {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0.25rem 0.5rem;
+    }
+    .pk-score-num {
+        font-size: 1.5rem;
+    }
+    .pk-instructions {
+        font-size: 1rem;
+    }
+    .pk-question-text {
+        font-size: 1rem;
+    }
+}
+
